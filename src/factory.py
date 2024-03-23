@@ -5,7 +5,9 @@ import sys
 
 from flask import Flask, render_template
 
-from src.modules import bootstrap, minify
+from src.modules import bootstrap, minify, db
+from src.utils import existe_esquema
+
 
 def create_app(config_filename: str = 'config.dev.json') -> Flask:
     app = Flask(__name__,
@@ -32,6 +34,12 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
     minificar = app.config.get("MINIFY", False)
     if minificar:
         minify.init_app(app)
+    db.init_app(app)
+
+    with app.app_context():
+        if not existe_esquema(app):
+            app.logger.fatal("É necessário fazer a migração/upgrade do banco")
+            sys.exit(1)
 
     @app.route('/')
     @app.route('/index')
