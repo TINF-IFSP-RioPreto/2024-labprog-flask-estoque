@@ -5,7 +5,7 @@ import sys
 
 from flask import Flask, render_template
 
-from src.modules import bootstrap
+from src.modules import bootstrap, minify
 
 def create_app(config_filename: str = 'config.dev.json') -> Flask:
     app = Flask(__name__,
@@ -29,6 +29,9 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
 
     app.logger.debug("Registrando as extensões")
     bootstrap.init_app(app)
+    minificar = app.config.get("MINIFY", False)
+    if minificar:
+        minify.init_app(app)
 
     @app.route('/')
     @app.route('/index')
