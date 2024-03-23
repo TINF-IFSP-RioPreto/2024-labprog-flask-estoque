@@ -1,19 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt=br">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-    <title>{{ title }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}" />
-</head>
-<body>
-<main id="content" class="px-5">
-    <div class="container-fluid">
-        <h1>Olá, mundo!</h1>
-    </div>
-</main>
-<footer>
-    <p class="align-center">Copyright 2024, Minha aplicação</p>
-</footer>
-</body>
-</html>
+{% extends '_layout.jinja2' %}
+{% block content %}
+Olá, mundo!
+{% endblock %}
