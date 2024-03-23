@@ -34,15 +34,23 @@
                     </li>
                     <li class="nav-item dropdown ms-3">
                         <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
-                            <span class="fw-semibold">Acesso ao sistema</span>
+                            {% if current_user.is_anonymous %}
+                                <span class="fw-semibold">Acesso ao sistema</span>
+                            {% else %}
+                                <img src="{{ current_user.url_gravatar(32) }}"
+                                     class="rounded-circle me-2 align-middle"
+                                     alt="Avatar do usuário" />{{ current_user.email }}
+                            {% endif %}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-lg-end">
-                            <li><a class="dropdown-item" href="#">{{ render_icon('box-arrow-in-right') }}&nbsp;Login</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">{{ render_icon('person') }}&nbsp;Perfil</a></li>
-                            <li><a class="dropdown-item" href="#">{{ render_icon('toggles') }}&nbsp;Gerenciamento dos usuários</a></li>
-                            <li><a class="dropdown-item" href="#">{{ render_icon('person-plus') }}&nbsp;Criar conta</a></li>
-                            <li><a class="dropdown-item" href="#">{{ render_icon('box-arrow-right') }}&nbsp;Logout</a>
+                            {% if current_user.is_anonymous %}
+                                <li><a class="dropdown-item" href="{{ url_for('auth.login') }}">{{ render_icon('box-arrow-in-right') }}&nbsp;Login</a></li>
+                                <li><a class="dropdown-item" href="#">{{ render_icon('person-plus') }}&nbsp;Criar conta</a></li>
+                            {% else %}
+                                <li><a class="dropdown-item" href="#">{{ render_icon('person') }}&nbsp;Perfil</a></li>
+                                <li><a class="dropdown-item" href="#">{{ render_icon('toggles') }}&nbsp;Gerenciamento dos usuários</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">{{ render_icon('box-arrow-right') }}&nbsp;Logout</a>
+                            {% endif %}
                         </ul>
                     </li>
                 </ul>

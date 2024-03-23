@@ -1,5 +1,5 @@
-{% from 'bootstrap5/utils.html' import render_icon %}
-{% from 'utils/menus.jinja2' import barra_navegacao %}
+{% from 'bootstrap5/utils.html' import render_icon, render_messages %}
+{% from 'utils/menus.jinja2' import barra_navegacao with context %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -13,6 +13,7 @@
 </head>
 <body id="page-top" class="d-flex flex-column min-vh-100 mx-2 mt-3">
 {{ barra_navegacao() }}
+{{ render_messages(container=True, dismissible=True, dismiss_animate=True) }}
 {% if title %}
     <div class="jumbotron"><h1 class="display-4">{{ title }}</h1></div>
 {% endif %}

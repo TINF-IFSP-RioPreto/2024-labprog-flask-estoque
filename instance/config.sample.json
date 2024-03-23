@@ -1,4 +1,15 @@
 {
+  "SECRET_KEY": "algumaCoisaGrandeEAleatorio",
   "BOOTSTRAP_SERVE_LOCAL": true,
-  "BOOTSTRAP_BOOTSWATCH_THEME": "cerulean"
+  "BOOTSTRAP_BOOTSWATCH_THEME": "cerulean",
+
+  "MINIFY": false,
+
+  "SQLITE_DB_NAME": "application_db.sqlite3",
+  "SQLALCHEMY_DATABASE_URI": "sqlite+pysqlite:///application_db.sqlite3",
+
+  "DEFAULT_ADMIN_EMAIL": "admin@admin.com.br",
+  "DEFAULT_ADMIN_PASSWORD": "123456",
+  "DEFAULT_USER_EMAIL": "user@user.com.br",
+  "DEFAULT_USER_PASSWORD": "123"
 }

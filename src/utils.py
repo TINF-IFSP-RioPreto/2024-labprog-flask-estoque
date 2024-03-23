@@ -1,4 +1,8 @@
+import datetime
 from pathlib import Path
+
+import pytz
+
 
 def existe_esquema(app) -> bool:
     # Se estivéssmos com um SGBD, poderíamos consultar os metadados para ver
@@ -16,3 +20,7 @@ def existe_esquema(app) -> bool:
     # ajustar o env.py
     #   from src.modules import Base
     #   target_metadata = Base.metada
+
+
+def timestamp():
+    return datetime.datetime.now(tz=pytz.timezone('UTC'))

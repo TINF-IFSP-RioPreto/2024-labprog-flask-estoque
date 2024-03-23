@@ -1,6 +1,8 @@
 from flask_bootstrap import Bootstrap5
+from flask_login import LoginManager
 from flask_minify import Minify
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import CSRFProtect
 from sqlalchemy.orm import DeclarativeBase
 
 
@@ -14,3 +16,5 @@ bootstrap = Bootstrap5()
 minify = Minify()
 db = SQLAlchemy(model_class=Base,
                 disable_autonaming=True)
+login = LoginManager()
+csrf = CSRFProtect()
