@@ -9,7 +9,7 @@ from flask_login import user_logged_in
 
 import src.routes.auth
 from src.models.usuario import User
-from src.modules import bootstrap, minify, db, csrf, login
+from src.modules import bootstrap, minify, db, csrf, login, mail
 from src.utils import existe_esquema, timestamp
 
 
@@ -45,6 +45,7 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
     login.login_message = "É necessário estar logado para acessar esta funcionalidade"
     login.login_message_category = 'warning'
     login.session_protection = 'strong'
+    mail.init_app(app)
 
     @login.user_loader
     def load_user(user_id):

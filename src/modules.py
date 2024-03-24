@@ -1,5 +1,6 @@
 from flask_bootstrap import Bootstrap5
 from flask_login import LoginManager
+from flask_mailman import Mail
 from flask_minify import Minify
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
@@ -18,3 +19,4 @@ db = SQLAlchemy(model_class=Base,
                 disable_autonaming=True)
 login = LoginManager()
 csrf = CSRFProtect()
+mail = Mail()
