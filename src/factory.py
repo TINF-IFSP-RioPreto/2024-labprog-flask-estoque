@@ -9,7 +9,7 @@ from flask_login import user_logged_in
 
 import src.routes.auth
 from src.models.usuario import User
-from src.modules import bootstrap, mail, minify, db, csrf, login
+from src.modules import bootstrap, minify, db, csrf, login, mail
 from src.utils import existe_esquema, timestamp
 
 

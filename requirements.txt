@@ -9,5 +9,3 @@ wtforms[email]~=3.1
 Flask-WTF~=1.2
 pytz~=2024.1
 Werkzeug~=3.0
-flask-mailman~=1.1
-PyJWT~=2.8

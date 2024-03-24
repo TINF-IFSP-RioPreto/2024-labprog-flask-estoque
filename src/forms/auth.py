@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms.fields.simple import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import EqualTo, InputRequired, Email
+from wtforms.validators import InputRequired, Email, EqualTo
 
 
 class LoginForm(FlaskForm):
@@ -14,19 +14,19 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Entrar")
 
 
-class ForgotPasswordForm(FlaskForm):
+class SetNewPasswordForm(FlaskForm):
+    password = PasswordField("Nova senha",
+                             validators=[InputRequired(message="É necessário escolher uma senha")])
+    password2 = PasswordField("Confirme a nova senha",
+                              validators=[InputRequired(message="É necessário repetir a nova senha"),
+                                          EqualTo('password',
+                                                  message="As senhão não são iguais")])
+    submit = SubmitField("Cadastrar a nova senha")
+
+class AskToResetPassword(FlaskForm):
     email = StringField("Email",
-                        validators=[InputRequired(message="É obrigatório informar o email"),
+                        validators=[InputRequired(message="É obrigatório informar o email para o qual"
+                                                          " se deseja definir nova senha"),
                                     Email(message="Informe um email válido",
                                           check_deliverability=False)])
-    submit = SubmitField("Pedir nova senha")
-
-
-class NewPasswordForm(FlaskForm):
-    password = PasswordField("Digite a nova senha",
-                             validators=[InputRequired(message="É necessário digitar a senha")])
-    password2 = PasswordField("Digite novamente a nova senha",
-                             validators=[InputRequired(message="É necessário digitar a senha"),
-                                         EqualTo('password',
-                                                 message="As senhas precisam ser iguais")])
-    submit = SubmitField("Mudar a senha")
+    submit = SubmitField("Redefinir a senha")
