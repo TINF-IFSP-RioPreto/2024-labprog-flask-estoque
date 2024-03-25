@@ -89,6 +89,7 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
                 novo_usuario.email = usuario.get('email')
                 novo_usuario.set_password(usuario.get('senha'))
                 novo_usuario.email_validado = True
+                novo_usuario.usa_2fa = False
                 novo_usuario.ativo = usuario.get('ativo')
                 novo_usuario.dta_validacao_email = timestamp()
                 db.session.add(novo_usuario)

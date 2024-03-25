@@ -1,14 +1,18 @@
 import smtplib
 import uuid
-from time import time
+from base64 import b64encode
 from hashlib import md5
+from io import BytesIO
+from time import time
 from typing import Optional
 
 import email_validator
 import jwt
+import pyotp
 from flask import current_app
 from flask_login import UserMixin
 from flask_mailman import EmailMessage
+from qrcode.main import QRCode
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import Uuid, String, Boolean, DateTime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -30,6 +34,35 @@ class User(db.Model, TimeStampMixin, UserMixin, BasicRepositoryMixin):
     dta_acesso_atual: Mapped[Optional[DateTime]] = mapped_column(DateTime, nullable=True)
 
     ativo: Mapped[Boolean] = mapped_column(Boolean, default=False)
+
+    usa_2fa: Mapped[Boolean] = mapped_column(Boolean, default=False)
+    otp_secret: Mapped[Optional[str]] = mapped_column(String(32), nullable=True, default="")
+    ultimo_otp: Mapped[Optional[str]] = mapped_column(String(6), nullable=True, default="")
+    dta_ativacao_2fa: Mapped[Optional[DateTime]] = mapped_column(DateTime, nullable=True)
+
+    @property
+    def otp_secret_formatted(self) -> str:
+        return " ".join(self.otp_secret[i:i + 4] for i in range(0, len(self.otp_secret), 4))
+
+    @property
+    def get_b64encoded_qr_totp_uri(self) -> str:
+        qr = QRCode(version=1, box_size=10, border=5)
+        qr.add_data(self.get_totp_uri, optimize=0)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color='black', back_color='white')
+        buffer = BytesIO()
+        img.save(buffer)
+        return b64encode(buffer.getvalue()).decode('UTF-8')
+
+    @property
+    def get_totp_uri(self) -> str:
+        otp = pyotp.totp.TOTP(self.otp_secret)
+        return otp.provisioning_uri(name=self.email,
+                                    issuer_name=current_app.config.get('APP_NAME'))
+
+    def verify_totp(self, token) -> bool:
+        totp = pyotp.TOTP(self.otp_secret)
+        return totp.verify(token, valid_window=1)
 
     @property
     def is_active(self):
@@ -91,7 +124,7 @@ class User(db.Model, TimeStampMixin, UserMixin, BasicRepositoryMixin):
         msg.to = [self.email]
         msg.subject = f"[{current_app.config.get('APP_NAME')}] {subject}"
         msg.body = body
-        msg.extra_headers['Message-ID'] =\
+        msg.extra_headers['Message-ID'] = \
             f"{str(uuid.uuid4())}@{current_app.config.get('APP_MTA_MESSAGEID')}"
         try:
             msg.send()

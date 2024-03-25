@@ -1,5 +1,6 @@
 from urllib.parse import urlsplit
 
+import pyotp
 from flask import Blueprint, redirect, url_for, render_template, flash, request, current_app
 from flask_login import current_user, login_user, login_required, logout_user
 from markupsafe import Markup
@@ -7,7 +8,8 @@ from markupsafe import Markup
 from src.models.usuario import User
 from src.modules import db
 from src.utils import timestamp
-from src.forms.auth import LoginForm, SetNewPasswordForm, AskToResetPassword, RegistrationForm, ProfileForm
+from src.forms.auth import LoginForm, SetNewPasswordForm, AskToResetPassword, RegistrationForm, ProfileForm, \
+    Read2FACodeForm
 
 bp = Blueprint('auth', __name__, url_prefix='/admin/user')
 
@@ -34,6 +36,13 @@ def login():
                          f"{url_for('auth.revalida_email', user_id=usuario.id)}\""
                          f">novo email de confirmacao</a>?"), category='warning')
             return redirect(url_for('auth.login'))
+        if usuario.usa_2fa:
+            flash(f"Conclua o login para o usuário {usuario.email} digitando o "
+                  f"código do segundo fator de autenticação", category='info')
+            return redirect(url_for('auth.get2fa',
+                                    user_id=usuario.id,
+                                    remember_me=bool(form.remember_me.data),
+                                    next=request.args.get('next')))
         login_user(usuario, remember=form.remember_me.data)
         db.session.commit()
         flash(f"Usuario {usuario.email} logado", category='success')
@@ -65,12 +74,14 @@ def revalida_email(user_id):
         next_page = url_for('index')
     return redirect(next_page)
 
+
 @bp.route('/logout')
 @login_required
 def logout():
     logout_user()
     flash("Sessão encerrada", category='success')
     return redirect(url_for('index'))
+
 
 @bp.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
@@ -93,6 +104,7 @@ def reset_password(token):
     else:
         flash("Token inválido para mudança de senha", category='warning')
         return redirect(url_for('index'))
+
 
 @bp.route('/new_password', methods=['GET', 'POST'])
 def new_password():
@@ -118,6 +130,7 @@ def new_password():
     return render_template('render_simple_slim_form.jinja2',
                            title="Esqueci minha senha",
                            form=form)
+
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -175,9 +188,98 @@ def profile():
     form = ProfileForm(obj=current_user)
     if form.validate_on_submit():
         current_user.nome = form.nome.data
-
+        if form.usa_2fa.data:
+            if not current_user.usa_2fa:
+                current_user.otp_secret = pyotp.random_base32()
+                db.session.commit()
+                flash("Alterações efetuadas. Conclua a ativação do segundo fator de autenticação",
+                      category='info')
+                return redirect(url_for('auth.enable_2fa'))
+        else:
+            if current_user.usa_2fa:
+                current_user.usa_2fa = False
+                current_user.otp_secret = None
+                current_user.ultimo_otp = None
+                current_user.dta_ativacao_2fa = None
+                body = render_template('auth/email/disable-2fa.jinja2',
+                                       user=current_user)
+                if not current_user.send_email(subject="Desativação do segundo fator de autenticação",
+                                               body=body):
+                    current_app.logger.warning("Email de desativação do 2FA para o usuario "
+                                               "%s não foi enviado" % (str(current_user.id)))
         db.session.commit()
         flash("Alterações efetuas", category='success')
     return render_template('auth/user.jinja2',
                            title="Perfil do usuário",
+                           form=form)
+
+
+@bp.route('enable_2fa', methods=['GET', 'POST'])
+@login_required
+def enable_2fa():
+    if current_user.usa_2fa:
+        flash("Configuração já efetuada. Para alterar, desative e reative o uso do segundo "
+              "fator de autenticação", category='info')
+        return redirect(url_for('auth.profile'))
+
+    form = Read2FACodeForm()
+    if request.method == 'POST' and form.is_submitted():
+        if current_user.verify_totp(form.codigo.data):
+            # noinspection PyBroadException
+            try:
+                current_user.usa_2fa = True
+                current_user.dta_ativacao_2fa = timestamp()
+                current_user.ultimo_otp = form.codigo.data
+                db.session.commit()
+                flash("Segundo fator de autenticação ativado", category='success')
+                return redirect(url_for('auth.profile'))
+            except Exception:
+                current_user.usa_2fa = False
+                current_user.otp_secret = None
+                current_user.ultimo_otp = None
+                current_user.dta_ativacao_2fa = None
+                db.session.commit()
+                flash("Problema na ativação do segundo fator de autenticação", category='danger')
+                return redirect(url_for('auth.profile'))
+        else:  # codigo errado
+            flash('O código informado está incorreto. Tente novamente.', category='warning')
+            return redirect(url_for('auth.enable_2fa'))
+
+    return render_template('auth/enable_2fa.jinja2',
+                           title="Ativação do segundo fator de autenticação",
+                           form=form,
+                           imagem=current_user.get_b64encoded_qr_totp_uri,
+                           token=current_user.otp_secret_formatted)
+
+
+@bp.route('/get2fa/<uuid:user_id>', methods=['GET', 'POST'])
+def get2fa(user_id):
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    remember_me = request.args.get('remember_me')
+    next_page = request.args.get('next')
+
+    form = Read2FACodeForm()
+
+    if form.validate_on_submit():
+        usuario = User.get_by_id(user_id)
+
+        if usuario is None or not usuario.usa_2fa:
+            return redirect(url_for('auth.login'))
+
+        token = str(form.codigo.data)
+        if usuario.verify_totp(token):
+            login_user(usuario, remember=bool(remember_me))
+            usuario.ultimo_otp = token
+            db.session.commit()
+            if not next_page or urlsplit(next_page).netloc != '':
+                next_page = url_for('index')
+            flash(f"Usuario {usuario.email} logado", category='success')
+            return redirect(next_page)
+        else:  # Codigo errado
+            flash("Código incorreto. Tente novamente", category='warning')
+
+    return render_template('render_simple_slim_form.jinja2',
+                           title="Segundo fator de autenticação",
                            form=form)
