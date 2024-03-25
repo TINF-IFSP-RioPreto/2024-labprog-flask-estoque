@@ -33,7 +33,6 @@ class ValidaComplexidadeSenha:
             expressoes.append(special)
             mensagem = mensagem + ", símbolos especiais"
 
-
         pattern = "".join(expressoes)
         print(password.data)
         print(pattern)
@@ -67,6 +66,7 @@ class SetNewPasswordForm(FlaskForm, ValidaComplexidadeSenha):
                                                   message="As senhão não são iguais")])
     submit = SubmitField("Cadastrar a nova senha")
 
+
 class AskToResetPassword(FlaskForm):
     email = StringField("Email",
                         validators=[InputRequired(message="É obrigatório informar o email para o qual"
@@ -74,3 +74,25 @@ class AskToResetPassword(FlaskForm):
                                     Email(message="Informe um email válido",
                                           check_deliverability=False)])
     submit = SubmitField("Redefinir a senha")
+
+
+class RegistrationForm(FlaskForm, ValidaComplexidadeSenha):
+    nome = StringField("Nome",
+                       validators=[InputRequired(message="É obrigatório informar um nome para cadastro")])
+    email = StringField("Email",
+                        validators=[InputRequired(message="É obrigatório informar um email para cadastro"),
+                                    Email(message="Informe um email válido",
+                                          check_deliverability=False)])
+    password = PasswordField("Senha",
+                             validators=[InputRequired(message="É necessário escolher uma senha")])
+    password2 = PasswordField("Confirme a senha",
+                              validators=[InputRequired(message="É necessário repetir a senha"),
+                                          EqualTo('password',
+                                                  message="As senhas não são iguais")])
+    submit = SubmitField("Adicionar usuário")
+
+    def validate_email(self, email):
+        from src.models.usuario import User
+        user = User.get_by_email(email.data)
+        if user:
+            raise ValidationError("Este email já está cadastrado")

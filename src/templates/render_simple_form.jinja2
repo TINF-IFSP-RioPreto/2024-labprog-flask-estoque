@@ -1,0 +1,6 @@
+{% extends '_layout.jinja2' %}
+{% from 'bootstrap5/form.html' import render_form %}
+
+{% block content %}
+    {{ render_form(form, button_style='primary') }}
+{% endblock %}
