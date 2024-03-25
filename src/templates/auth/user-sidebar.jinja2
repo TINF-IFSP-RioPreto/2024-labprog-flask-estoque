@@ -1,0 +1,23 @@
+{% macro user_sidebar() %}
+    <table class="table table-sm small justify-content-center">
+        <tr>
+            <td colspan="2" class="text-center">
+                <img src="{{ current_user.url_gravatar(256) }}"
+                     class="rounded-circle me-3 mb-4"
+                     alt="Avatar do usuário" />
+            </td>
+        </tr>
+        <tr>
+            <th scope="row" class="text-start">Registrado em</th>
+            <td class="text-center">{{ current_user.dta_cadastro | as_localtime }}</td>
+        </tr>
+        <tr>
+            <th scope="row" class="text-start">Acesso atual</th>
+            <td class="text-center">{{ current_user.dta_acesso_atual | as_localtime }}</td>
+        </tr>
+        <tr>
+            <th scope="row" class="text-start">Último atualização</th>
+            <td class="text-center">{{ current_user.dta_atualizaca | as_localtime }}</td>
+        </tr>
+    </table>
+{% endmacro %}

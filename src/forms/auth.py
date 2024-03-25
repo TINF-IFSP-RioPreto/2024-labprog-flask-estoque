@@ -96,3 +96,10 @@ class RegistrationForm(FlaskForm, ValidaComplexidadeSenha):
         user = User.get_by_email(email.data)
         if user:
             raise ValidationError("Este email já está cadastrado")
+
+
+class ProfileForm(FlaskForm):
+    nome = StringField("Nome",
+                       validators=[InputRequired(message="É obrigatório informar um nome para cadastro")])
+    usa_2fa = BooleanField("Ativar o segundo fator de autenticação")
+    submit = SubmitField("Efetuar as mudanças")

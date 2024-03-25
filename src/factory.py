@@ -10,7 +10,7 @@ from flask_login import user_logged_in
 import src.routes.auth
 from src.models.usuario import User
 from src.modules import bootstrap, minify, db, csrf, login, mail
-from src.utils import existe_esquema, timestamp
+from src.utils import existe_esquema, timestamp, as_localtime
 
 
 def create_app(config_filename: str = 'config.dev.json') -> Flask:
@@ -102,5 +102,9 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
 
     app.logger.debug("Registrando as blueprints")
     app.register_blueprint(src.routes.auth.bp)
+
+    # Formatando as datas para horário local
+    # https://stackoverflow.com/q/65359968
+    app.jinja_env.filters['as_localtime'] = as_localtime
 
     return app
