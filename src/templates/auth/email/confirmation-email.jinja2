@@ -1,0 +1,7 @@
+Caro {{ user.nome }},
+
+Para validar o seu cadastro, clique no link abaixo:
+
+{{ host }}{{ url_for('auth.valida_email', token=token) }}
+
+Se você não criou uma conta conosco, basta ignorar este email

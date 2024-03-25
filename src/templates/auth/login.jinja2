@@ -25,7 +25,7 @@
                         </div>
                         <div class="card-footer py-3 border-0">
                             <div class="text-center">
-                                Não tem uma conta? <a href="#" class="text-dark">Crie uma!</a>
+                                Não tem uma conta? <a href="{{ url_for('auth.register') }}" class="text-dark">Crie uma!</a>
                             </div>
                             <div class="text-center">
                                 <a href="{{ url_for('auth.new_password') }}" class="text-dark">Esqueceu a senha?</a>

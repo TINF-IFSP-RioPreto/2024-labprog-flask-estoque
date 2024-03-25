@@ -1,0 +1,8 @@
+Caro {{ user.nome }},
+
+Para reconfirmar o seu email, clique no link abaixo:
+
+{{ host }}{{ url_for('auth.valida_email', token=token) }}
+
+Se você não criou uma conta conosco, ou não solicitou a revalidação do cadastro,
+basta ignorar este email
