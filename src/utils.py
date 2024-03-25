@@ -10,7 +10,8 @@ def existe_esquema(app) -> bool:
     # SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '<nome>'
     # No caso do SQLite, vamos apenas verificar se existe ou não o arquivo no
     # sistema de arquivos
-    arquivo = Path(app.instance_path) / Path(app.config.get('SQLITE_DB_NAME', 'application_db.sqlite3'))
+    arquivo = Path(app.instance_path) / Path(app.config.get('SQLITE_DB_NAME',
+                                                            'application_db.sqlite3'))
     return arquivo.is_file()
     # configurar o alembic
     #   alembic init instance/migrations
@@ -40,5 +41,5 @@ def as_localtime(data_em_utc) -> str | datetime.date:
         data_local = data_em_utc.astimezone(pytz.timezone(tz))
         return data_local.strftime(formato)
     except Exception as e:
-        current_app.logger.warning("as_localtime: Exception %s" % (e))
+        current_app.logger.warning("as_localtime: Exception %s", e)
         return data_em_utc
