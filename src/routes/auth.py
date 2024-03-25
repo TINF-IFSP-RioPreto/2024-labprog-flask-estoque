@@ -7,7 +7,7 @@ from markupsafe import Markup
 from src.models.usuario import User
 from src.modules import db
 from src.utils import timestamp
-from src.forms.auth import LoginForm, SetNewPasswordForm, AskToResetPassword, RegistrationForm
+from src.forms.auth import LoginForm, SetNewPasswordForm, AskToResetPassword, RegistrationForm, ProfileForm
 
 bp = Blueprint('auth', __name__, url_prefix='/admin/user')
 
@@ -167,3 +167,17 @@ def valida_email(token):
         return redirect(url_for('auth.login'))
     flash("Token inválido", category='warning')
     return redirect(url_for('auth.login'))
+
+
+@bp.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    form = ProfileForm(obj=current_user)
+    if form.validate_on_submit():
+        current_user.nome = form.nome.data
+
+        db.session.commit()
+        flash("Alterações efetuas", category='success')
+    return render_template('auth/user.jinja2',
+                           title="Perfil do usuário",
+                           form=form)

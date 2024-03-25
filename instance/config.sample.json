@@ -11,5 +11,8 @@
   "DEFAULT_ADMIN_EMAIL": "admin@admin.com.br",
   "DEFAULT_ADMIN_PASSWORD": "123456",
   "DEFAULT_USER_EMAIL": "user@user.com.br",
-  "DEFAULT_USER_PASSWORD": "123"
+  "DEFAULT_USER_PASSWORD": "123",
+
+  "TIMEZONE": "America/Sao_Paulo"
+
 }

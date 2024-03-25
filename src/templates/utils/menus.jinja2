@@ -47,7 +47,7 @@
                                 <li><a class="dropdown-item" href="{{ url_for('auth.login') }}">{{ render_icon('box-arrow-in-right') }}&nbsp;Login</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('auth.register') }}">{{ render_icon('person-plus') }}&nbsp;Criar conta</a></li>
                             {% else %}
-                                <li><a class="dropdown-item" href="#">{{ render_icon('person') }}&nbsp;Perfil</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">{{ render_icon('person') }}&nbsp;Perfil</a></li>
                                 <li><a class="dropdown-item" href="#">{{ render_icon('toggles') }}&nbsp;Gerenciamento dos usuários</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">{{ render_icon('box-arrow-right') }}&nbsp;Logout</a>
                             {% endif %}

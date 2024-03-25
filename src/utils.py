@@ -24,3 +24,21 @@ def existe_esquema(app) -> bool:
 
 def timestamp():
     return datetime.datetime.now(tz=pytz.timezone('UTC'))
+
+
+# Formatando as datas para horário local
+# https://stackoverflow.com/q/65359968
+def as_localtime(data_em_utc) -> str | datetime.date:
+    from flask import current_app
+    if not data_em_utc:
+        return "Sem data"
+    tz = current_app.config.get('TIMEZONE', 'UTC')
+    try:
+        formato = '%Y-%m-%d, %H:%M'
+        utc = pytz.timezone('UTC')
+        data_em_utc = utc.localize(data_em_utc)
+        data_local = data_em_utc.astimezone(pytz.timezone(tz))
+        return data_local.strftime(formato)
+    except Exception as e:
+        current_app.logger.warning("as_localtime: Exception %s" % (e))
+        return data_em_utc

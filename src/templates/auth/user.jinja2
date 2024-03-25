@@ -1,0 +1,14 @@
+{% extends '_layout.jinja2' %}
+{% from 'bootstrap5/form.html' import render_form %}
+{% from 'auth/user-sidebar.jinja2' import user_sidebar with context %}
+
+{% block content %}
+    <div class="container d-flex">
+        <div class="me-auto">
+            {{ user_sidebar() }}
+        </div>
+        <div class="ms-5 flex-grow-1">
+            {{ render_form(form, button_style='primary') }}
+        </div>
+    </div>
+{% endblock %}
