@@ -14,10 +14,10 @@ from flask_login import UserMixin
 from flask_mailman import EmailMessage
 from qrcode.main import QRCode
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.types import Uuid, String, Boolean, DateTime
-from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.types import Boolean, DateTime, String, Uuid
+from werkzeug.security import check_password_hash, generate_password_hash
 
-from src.models.base_mixin import TimeStampMixin, BasicRepositoryMixin
+from src.models.base_mixin import BasicRepositoryMixin, TimeStampMixin
 from src.modules import db
 
 
@@ -75,7 +75,11 @@ class User(db.Model, TimeStampMixin, UserMixin, BasicRepositoryMixin):
     # noinspection PyTypeChecker
     @email.setter
     def email(self, value):
-        self.email_normalizado = email_validator.validate_email(value, check_deliverability=False).normalized.lower()
+        self.email_normalizado = (email_validator.
+                                  validate_email(value,
+                                                 check_deliverability=False).
+                                  normalized.
+                                  lower())
 
     def url_gravatar(self, size=32):
         digest = md5(self.email.encode('utf-8')).hexdigest()
@@ -90,15 +94,19 @@ class User(db.Model, TimeStampMixin, UserMixin, BasicRepositoryMixin):
 
     @classmethod
     def get_by_email(cls, email):
-        user_email = email_validator.validate_email(email, check_deliverability=False).normalized.lower()
+        user_email = (email_validator.
+                      validate_email(email,
+                                     check_deliverability=False).
+                      normalized.
+                      lower())
         return cls.get_first_or_none_by('email_normalizado', user_email)
 
     def create_jwt_token(self, action: str, expires_in: int = 600) -> str:
-        payload = {
-            'user': str(self.id),
-            'action': action.lower(),
-            'exp': time() + expires_in
-        }
+        payload = dict(
+            user=str(self.id),
+            action=action.lower(),
+            exp=time() + expires_in
+        )
         return jwt.encode(payload=payload,
                           key=current_app.config.get('SECRET_KEY'),
                           algorithm='HS256')
@@ -110,7 +118,7 @@ class User(db.Model, TimeStampMixin, UserMixin, BasicRepositoryMixin):
                                  key=current_app.config.get('SECRET_KEY'),
                                  algorithms=['HS256'])
         except jwt.exceptions.PyJWTError as e:
-            current_app.logger.error("JWT Token validation: %s" % (e))
+            current_app.logger.error("JWT Token validation: %s", e)
             return None, None
         try:
             user_id = uuid.UUID(payload.get('user', None))
@@ -130,5 +138,4 @@ class User(db.Model, TimeStampMixin, UserMixin, BasicRepositoryMixin):
             msg.send()
         except smtplib.SMTPException:
             return False
-        else:
-            return True
+        return True

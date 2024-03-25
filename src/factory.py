@@ -9,28 +9,39 @@ from flask_login import user_logged_in
 
 import src.routes.auth
 from src.models.usuario import User
-from src.modules import bootstrap, minify, db, csrf, login, mail
-from src.utils import existe_esquema, timestamp, as_localtime
+from src.modules import bootstrap, csrf, db, login, mail, minify
+from src.utils import as_localtime, existe_esquema, timestamp
 
 
 def create_app(config_filename: str = 'config.dev.json') -> Flask:
+    # Desativar as mensagens do servidor HTTP
+    # https://stackoverflow.com/a/18379764
+    logging.getLogger('werkzeug').setLevel(logging.ERROR)
+
+    # Mudar o formato das mensagens de log
+    logging.basicConfig(
+        format='[%(asctime)s | %(levelname)-7s | '
+               '%(filename)s:%(funcName)s():%(lineno)04s] %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+
     app = Flask(__name__,
                 instance_relative_config=True,
                 static_folder='static',
                 template_folder='templates')
+
+    app.logger.setLevel(logging.DEBUG)
 
     try:
         os.makedirs(app.instance_path)
     except OSError:
         pass
 
-    app.logger.setLevel(logging.DEBUG)
-
-    app.logger.debug("Configurando a aplicação a partir do arquivo '%s'" % (config_filename))
+    app.logger.debug("Configurando a aplicação a partir do arquivo '%s'", config_filename)
     try:
         app.config.from_file(config_filename, load=json.load)
     except FileNotFoundError:
-        app.logger.fatal("O arquivo de configuração '%s' não existe" % (config_filename))
+        app.logger.critical("O arquivo de configuração '%s' não existe", config_filename)
         sys.exit(1)
 
     app.logger.debug("Registrando as extensões")
@@ -55,6 +66,7 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
             return None
         return User.get_by_id(auth_id)
 
+    # noinspection PyUnusedLocal
     @user_logged_in.connect_via(app)
     def update_login_details(sender_app, user):
         agora = timestamp()
@@ -65,25 +77,23 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
 
     with app.app_context():
         if not existe_esquema(app):
-            app.logger.fatal("É necessário fazer a migração/upgrade do banco")
+            app.logger.critical("É necessário fazer a migração/upgrade do banco")
             sys.exit(1)
 
         if User.is_empty():
             usuarios = [
-                {'nome': "Administrador",
-                 'email': app.config.get('DEFAULT_ADMIN_EMAIL', 'admin@admin.com.br'),
-                 'senha': app.config.get('DEFAULT_ADMIN_PASSWORD', "123456"),
-                 'ativo': True
-                 },
-                {
-                    'nome': "Usuário",
-                    'email': app.config.get('DEFAULT_USER_EMAIL', 'user@user.com.br'),
-                    'senha': app.config.get('DEFAULT_USER_PASSWORD', "123"),
-                    'ativo': False
-                }
+                dict(nome="Administrador",
+                     email=app.config.get('DEFAULT_ADMIN_EMAIL', 'admin@admin.com.br'),
+                     senha=app.config.get('DEFAULT_ADMIN_PASSWORD', "123456"),
+                     ativo=True),
+                dict(nome="Usuário",
+                     email=app.config.get('DEFAULT_USER_EMAIL', 'user@user.com.br'),
+                     senha=app.config.get('DEFAULT_USER_PASSWORD', "123"),
+                     ativo=False)
             ]
             for usuario in usuarios:
-                app.logger.info("Adicionando usuário (%s:%s)" % (usuario.get('email'), usuario.get('senha')))
+                app.logger.info("Adicionando usuário (%s:%s)", usuario.get('email'),
+                                usuario.get('senha'))
                 novo_usuario = User()
                 novo_usuario.nome = usuario.get('nome')
                 novo_usuario.email = usuario.get('email')
@@ -98,7 +108,7 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
     @app.route('/')
     @app.route('/index')
     def index():
-        return render_template('index.jinja',
+        return render_template('index.jinja2',
                                title="Página principal")
 
     app.logger.debug("Registrando as blueprints")
@@ -106,6 +116,7 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
 
     # Formatando as datas para horário local
     # https://stackoverflow.com/q/65359968
+    app.logger.debug("Registrando filtros no Jinja2")
     app.jinja_env.filters['as_localtime'] = as_localtime
 
     return app

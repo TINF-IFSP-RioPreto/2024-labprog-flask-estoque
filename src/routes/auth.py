@@ -1,15 +1,15 @@
 from urllib.parse import urlsplit
 
 import pyotp
-from flask import Blueprint, redirect, url_for, render_template, flash, request, current_app
-from flask_login import current_user, login_user, login_required, logout_user
+from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_required, login_user, logout_user
 from markupsafe import Markup
 
+from src.forms.auth import AskToResetPassword, LoginForm, ProfileForm, Read2FACodeForm, \
+    RegistrationForm, SetNewPasswordForm
 from src.models.usuario import User
 from src.modules import db
 from src.utils import timestamp
-from src.forms.auth import LoginForm, SetNewPasswordForm, AskToResetPassword, RegistrationForm, ProfileForm, \
-    Read2FACodeForm
 
 bp = Blueprint('auth', __name__, url_prefix='/admin/user')
 
@@ -66,7 +66,7 @@ def revalida_email(user_id):
                                host=current_app.config.get('APP_BASE_URL'))
         if not usuario.send_email(subject="Revalide o seu email", body=body):
             current_app.logger.warning("Email de revalidação para o usuario %s não "
-                                       "foi enviado" % {str(usuario.id)})
+                                       "foi enviado", str(usuario.id))
         else:
             flash("Mensagem para validação do email enviada", category='info')
     next_page = request.args.get('next')
@@ -101,9 +101,9 @@ def reset_password(token):
         return render_template('render_simple_slim_form.jinja2',
                                title="Escolha uma nova senha",
                                form=form)
-    else:
-        flash("Token inválido para mudança de senha", category='warning')
-        return redirect(url_for('index'))
+    # token não é de reset_password
+    flash("Token inválido para mudança de senha", category='warning')
+    return redirect(url_for('index'))
 
 
 @bp.route('/new_password', methods=['GET', 'POST'])
@@ -115,17 +115,20 @@ def new_password():
     if form.validate_on_submit():
         email = form.email.data
         usuario = User.get_by_email(email)
-        flash(f"Se houver uma conta com o email {email}, uma mensagem será enviada com as instruções "
-              f"para a troca da senha", category='info')
+        flash(
+            f"Se houver uma conta com o email {email}, uma mensagem será enviada com as "
+            f"instruções para a troca da senha", category='info')
         if usuario:
             body = render_template('auth/email/password-reset-email.jinja2',
                                    user=usuario,
                                    token=usuario.create_jwt_token('reset_password'),
                                    host=current_app.config.get('APP_BASE_URL'))
             if not usuario.send_email(subject="Altere a sua senha", body=body):
-                current_app.logger.warning("Email de reset de senha para o usuario %s não enviado" % (email))
+                current_app.logger.warning("Email de reset de senha para o usuario %s "
+                                           "não enviado", email)
             return redirect(url_for('auth.login'))
-        current_app.logger.warning("Pedido de reset de senha para usuário inexistente (%s)" % (email))
+        current_app.logger.warning("Pedido de reset de senha para usuário inexistente (%s)",
+                                   email)
         return redirect(url_for('auth.login'))
     return render_template('render_simple_slim_form.jinja2',
                            title="Esqueci minha senha",
@@ -155,10 +158,10 @@ def register():
         if not usuario.send_email(subject="Ative a sua conta",
                                   body=body):
             current_app.logger.warning("Email de ativação para o usuario %s não "
-                                       "enviado" % (str(usuario.id)))
+                                       "enviado", str(usuario.id))
         db.session.commit()
-        flash("Cadastro efetuado com sucesso. Confirme o seu email antes de logar no sistema",
-              category='success')
+        flash("Cadastro efetuado com sucesso. Confirme o seu email antes de logar "
+              "no sistema", category='success')
         return redirect(url_for('auth.login'))
 
     return render_template('render_simple_form.jinja2',
@@ -192,8 +195,8 @@ def profile():
             if not current_user.usa_2fa:
                 current_user.otp_secret = pyotp.random_base32()
                 db.session.commit()
-                flash("Alterações efetuadas. Conclua a ativação do segundo fator de autenticação",
-                      category='info')
+                flash("Alterações efetuadas. Conclua a ativação do segundo fator de"
+                      " autenticação", category='info')
                 return redirect(url_for('auth.enable_2fa'))
         else:
             if current_user.usa_2fa:
@@ -203,10 +206,11 @@ def profile():
                 current_user.dta_ativacao_2fa = None
                 body = render_template('auth/email/disable-2fa.jinja2',
                                        user=current_user)
-                if not current_user.send_email(subject="Desativação do segundo fator de autenticação",
-                                               body=body):
+                if not current_user.send_email(
+                        subject="Desativação do segundo fator de autenticação",
+                        body=body):
                     current_app.logger.warning("Email de desativação do 2FA para o usuario "
-                                               "%s não foi enviado" % (str(current_user.id)))
+                                               "%s não foi enviado", str(current_user.id))
         db.session.commit()
         flash("Alterações efetuas", category='success')
     return render_template('auth/user.jinja2',
@@ -218,8 +222,8 @@ def profile():
 @login_required
 def enable_2fa():
     if current_user.usa_2fa:
-        flash("Configuração já efetuada. Para alterar, desative e reative o uso do segundo "
-              "fator de autenticação", category='info')
+        flash("Configuração já efetuada. Para alterar, desative e reative o uso do "
+              "segundo fator de autenticação", category='info')
         return redirect(url_for('auth.profile'))
 
     form = Read2FACodeForm()
@@ -239,10 +243,12 @@ def enable_2fa():
                 current_user.ultimo_otp = None
                 current_user.dta_ativacao_2fa = None
                 db.session.commit()
-                flash("Problema na ativação do segundo fator de autenticação", category='danger')
+                flash("Problema na ativação do segundo fator de autenticação",
+                      category='danger')
                 return redirect(url_for('auth.profile'))
         else:  # codigo errado
-            flash('O código informado está incorreto. Tente novamente.', category='warning')
+            flash('O código informado está incorreto. Tente novamente.',
+                  category='warning')
             return redirect(url_for('auth.enable_2fa'))
 
     return render_template('auth/enable_2fa.jinja2',
@@ -277,8 +283,8 @@ def get2fa(user_id):
                 next_page = url_for('index')
             flash(f"Usuario {usuario.email} logado", category='success')
             return redirect(next_page)
-        else:  # Codigo errado
-            flash("Código incorreto. Tente novamente", category='warning')
+        # Codigo errado
+        flash("Código incorreto. Tente novamente", category='warning')
 
     return render_template('render_simple_slim_form.jinja2',
                            title="Segundo fator de autenticação",

@@ -12,27 +12,29 @@ class TimeStampMixin:
     """
     Mixin para incluir data de cadastro e data de atualização
     """
+    # pylint: disable=not-callable
     dta_cadastro: Mapped[DateTime] = mapped_column(DateTime,
                                                    server_default=sa.func.now(),
                                                    nullable=False)
-    dta_atualizaca: Mapped[Optional[DateTime]] = mapped_column(DateTime,
-                                                               onupdate=sa.func.now(),
-                                                               default=sa.func.now(),
-                                                               nullable=True)
+    # pylint: disable=not-callable
+    dta_atualizacao: Mapped[Optional[DateTime]] = mapped_column(DateTime,
+                                                                onupdate=sa.func.now(),
+                                                                default=sa.func.now(),
+                                                                nullable=True)
 
 
 class BasicRepositoryMixin:
     @classmethod
     def is_empty(cls) -> bool:
-        return not (db.session.execute(sa.select(cls).limit(1)).scalar_one_or_none())
+        return not db.session.execute(sa.select(cls).limit(1)).scalar_one_or_none()
 
     @classmethod
     def get_by_id(cls, cls_id) -> Self | None:
         try:
-            cls_id = uuid.UUID(str(cls_id))
+            obj_id = uuid.UUID(str(cls_id))
         except ValueError:
-            cls_id = cls_id
-        return db.session.get(cls, cls_id)
+            obj_id = cls_id
+        return db.session.get(cls, obj_id)
 
     @classmethod
     def get_first_or_none_by(cls,
