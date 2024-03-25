@@ -1,0 +1,31 @@
+{% extends '_layout.jinja2' %}
+{% from 'auth/user-sidebar.jinja2' import user_sidebar with context %}
+{% from 'bootstrap5/form.html' import render_form %}
+
+{% block content %}
+    <div class="container d-flex">
+        <div class="me-auto">
+            {{ user_sidebar() }}
+        </div>
+        <div class="ms-5 flex-grow-1">
+            <ol>
+                <li class="my-4">Baixe o <a
+                        href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">Google
+                    Authenticador</a>, o <a href="https://play.google.com/store/apps/details?id=com.azure.authenticator">Microsoft
+                    Authenticator</a> ou outro programa para geração de códigos para segundo fator de autenticação</li>
+                <li class="my=4">Configure o autenticador</li>
+                <li>
+                    <ul>
+                        <li>Digitalize o código QR da imagem abaixo, ou</li>
+                        <li>Utilizando o token <strong>{{ token }}</strong></li>
+                    </ul>
+                </li>
+                <li>Quando o autenticador estiver configurado, digite o código gerado no campo abaixo</li>
+            </ol>
+            <div class="text-center">
+                <img src="data:image/png; base64, {{ imagem }}" alt="Secret token" style="width: 200px;height: 200px" />
+            </div>
+            {{ render_form(form, button_style='primary') }}
+        </div>
+    </div>
+{% endblock %}

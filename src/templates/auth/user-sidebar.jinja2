@@ -1,4 +1,5 @@
 {% macro user_sidebar() %}
+    {% from 'bootstrap5/utils.html' import render_icon %}
     <table class="table table-sm small justify-content-center">
         <tr>
             <td colspan="2" class="text-center">
@@ -19,5 +20,14 @@
             <th scope="row" class="text-start">Último atualização</th>
             <td class="text-center">{{ current_user.dta_atualizaca | as_localtime }}</td>
         </tr>
+        <tr>
+            <th scope="row" class="text-start">Segundo fator de autenticação</th>
+        {% if current_user.usa_2fa %}
+            <td class="text-center">{{ render_icon('shield-fill-check', size='1.5em', color='success') }}</td>
+        {% else %}
+            <td class="text-center">{{ render_icon('shield-slash-fill', size='1.5em', color='danger') }}</td>
+        {% endif %}
+        </tr>
+
     </table>
 {% endmacro %}

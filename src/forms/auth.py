@@ -3,17 +3,17 @@ import re
 from flask import current_app
 from flask_wtf import FlaskForm
 from wtforms.fields.simple import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import InputRequired, Email, EqualTo, ValidationError
+from wtforms.validators import InputRequired, Email, EqualTo, ValidationError, Length
 
 
 class ValidaComplexidadeSenha:
     def validate_password(self, password):
         # Definição da complexidade da senha por expressões regulares
         expressoes = []
-        min = current_app.config.get('PASSWORD_MIN', 8)
-        max = current_app.config.get('PASSWORD_MAX', 64)
-        expressoes.append(f'^(?=.{{{min},{max}}}$)')
-        mensagem = f"A sua senha precisa ter entre {min} e {max} caracteres"
+        min_caracteres = current_app.config.get('PASSWORD_MIN', 8)
+        max_caracteres = current_app.config.get('PASSWORD_MAX', 64)
+        expressoes.append(f'^(?=.{{{min_caracteres},{max_caracteres}}}$)')
+        mensagem = f"A sua senha precisa ter entre {min_caracteres} e {max_caracteres} caracteres"
 
         upper = r'(?=.*[A-Z])'  # Pelo menos 1 letra maiúscula
         lower = r'(?=.*[a-z])'  # Pelo menos 1 letra minúscula
@@ -103,3 +103,14 @@ class ProfileForm(FlaskForm):
                        validators=[InputRequired(message="É obrigatório informar um nome para cadastro")])
     usa_2fa = BooleanField("Ativar o segundo fator de autenticação")
     submit = SubmitField("Efetuar as mudanças")
+
+
+class Read2FACodeForm(FlaskForm):
+    codigo = StringField("Código",
+                         validators=[InputRequired(message="Informe o código fornecido pelo "
+                                                           "aplicativo autenticador"),
+                                     Length(min=6, max=6)],
+                         render_kw={'inputmode': 'numeric',
+                                    'autocomplete': 'one-time-code',
+                                    'pattern': r'\d{6}'})
+    submit = SubmitField("Enviar código")
