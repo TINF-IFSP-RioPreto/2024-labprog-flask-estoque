@@ -7,7 +7,7 @@ from flask_mailman import EmailMessage
 
 from src.models.usuario import User
 from src.modules import db
-from src.forms.auth import ForgotPasswordForm, LoginForm
+from src.forms.auth import ForgotPasswordForm, LoginForm, NewPasswordForm
 
 bp = Blueprint('auth', __name__, url_prefix='/admin/user')
 
@@ -93,14 +93,26 @@ def forgot_password():
 
 @bp.route('/new_password/<token>', methods=['GET', 'POST'])
 def new_password(token):
-
     try:
         payload = jwt.decode(token,
                              key=current_app.config.get("SECRET_KEY"),
                              algorithms=['HS256'])
     except jwt.exceptions.PyJWTError:
         flash("Token invalido", category='danger')
-    else:
-        current_app.logger.debug(payload)
+        return redirect(url_for('index'))
 
-    return redirect(url_for('index'))
+    form = NewPasswordForm()
+    if form.validate_on_submit():
+        usuario = User.get_by_email(payload['usuario'])
+        if usuario is None:
+            flash("Usuario inexistente", category='danger')
+            return redirect(url_for('index'))
+
+        usuario.set_password(form.password.data)
+        db.session.commit()
+        flash(f"Senha para o usuario {payload['usuario']} alterada", category='success')
+        return redirect(url_for('auth.login'))
+
+    return render_template('auth/new_password.jinja2',
+                           title="Criar nova senha",
+                           form=form)
