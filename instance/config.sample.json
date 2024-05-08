@@ -1,7 +1,7 @@
 {
   "SECRET_KEY": "algumaCoisaGrandeEAleatorio",
   "BOOTSTRAP_SERVE_LOCAL": true,
-  "BOOTSTRAP_BOOTSWATCH_THEME": "cerulean",
+  "_BOOTSTRAP_BOOTSWATCH_THEME": "cerulean",
 
   "MINIFY": false,
 
@@ -11,5 +11,12 @@
   "DEFAULT_ADMIN_EMAIL": "admin@admin.com.br",
   "DEFAULT_ADMIN_PASSWORD": "123456",
   "DEFAULT_USER_EMAIL": "user@user.com.br",
-  "DEFAULT_USER_PASSWORD": "123"
+  "DEFAULT_USER_PASSWORD": "123",
+
+  "SENDGRID_API_KEY": "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",
+  "MAIL_SERVER": "smtp.sendgrid.net",
+  "MAIL_PORT": 587,
+  "MAIL_USERNAME": "apikey",
+  "MAIL_PASSWORD": "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",
+  "MAIL_BACKEND": "console"
 }
