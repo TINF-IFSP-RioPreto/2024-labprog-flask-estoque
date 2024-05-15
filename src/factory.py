@@ -7,7 +7,7 @@ import uuid
 from flask import Flask, render_template
 from flask_login import user_logged_in
 
-import src.routes.auth
+from src.models.categoria import Categoria
 from src.models.usuario import User
 from src.modules import bootstrap, csrf, db, login, mail, minify
 from src.utils import as_localtime, existe_esquema, timestamp
@@ -80,6 +80,15 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
             app.logger.critical("É necessário fazer a migração/upgrade do banco")
             sys.exit(1)
 
+        if Categoria.is_empty():
+            categorias = ["Bebidas", "Carnes", "Padaria",
+                          "Laticínios", "Hortifruti"]
+            for c in categorias:
+                categoria = Categoria()
+                categoria.nome = c
+                db.session.add(categoria)
+            db.session.commit()
+
         if User.is_empty():
             usuarios = [
                 dict(nome="Administrador",
@@ -112,7 +121,10 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
                                title="Página principal")
 
     app.logger.debug("Registrando as blueprints")
-    app.register_blueprint(src.routes.auth.bp)
+    from src.routes.auth import bp as auth_bp
+    from src.routes.categoria import bp as categoria_bp
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(categoria_bp)
 
     # Formatando as datas para horário local
     # https://stackoverflow.com/q/65359968
