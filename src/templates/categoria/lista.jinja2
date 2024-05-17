@@ -17,11 +17,12 @@
                 <td class="text-center">
                     <div class="btn-group" role="group">
                         <a class="btn btn-secondary btn-sm"
-                           href="#">
+                           href="{{ url_for('categorias.edit', id_categoria=categoria.id) }}">
                             {{ render_icon('pencil-square', size='1.25em', title="Alterar") }}
                         </a>
                         <a class="btn btn-danger btn-sm"
-                           href="#">
+                           href="{{ url_for('categorias.remove', id_categoria=categoria.id) }}"
+                           onclick="return confirm('Deseja realmente remover a categoria {{ categoria.nome }}?')">
                             {{ render_icon('trash', size='1.25em', title="Remover") }}
                         </a>
                     </div>
