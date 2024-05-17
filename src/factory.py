@@ -8,6 +8,7 @@ from flask import Flask, render_template
 from flask_login import user_logged_in
 
 import src.routes.auth
+from src.models.categoria import Categoria
 from src.models.usuario import User
 from src.modules import bootstrap, csrf, db, login, mail, minify
 from src.utils import as_localtime, existe_esquema, timestamp
@@ -105,6 +106,19 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
                 db.session.add(novo_usuario)
                 db.session.commit()
 
+        if Categoria.is_empty():
+            categorias = ["Alimentos",
+                          "Bebidas",
+                          "Padaria",
+                          "Material de limpeza",
+                          "Açougue"]
+            for c in categorias:
+                app.logger.info("Adicionando categoria %s", c)
+                categoria = Categoria()
+                categoria.nome = c
+                db.session.add(categoria)
+            db.session.commit()
+
     @app.route('/')
     @app.route('/index')
     def index():
@@ -112,7 +126,10 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
                                title="Página principal")
 
     app.logger.debug("Registrando as blueprints")
-    app.register_blueprint(src.routes.auth.bp)
+    from src.routes.auth import bp as auth_bp
+    from src.routes.categoria import bp as categoria_bp
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(categoria_bp)
 
     # Formatando as datas para horário local
     # https://stackoverflow.com/q/65359968

@@ -28,7 +28,7 @@
                             {{ render_icon('book') }} Categorias
                         </a>
                         <ul class="dropdown-menu dropdown-menu-lg-end">
-                            <li><a class="dropdown-item" href="#">{{ render_icon('card-list') }}&nbsp;Listar</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('categorias.lista') }}">{{ render_icon('card-list') }}&nbsp;Listar</a></li>
                             <li><a class="dropdown-item" href="#">{{ render_icon('plus') }}&nbsp;Adicionar</a></li>
                         </ul>
                     </li>

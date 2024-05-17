@@ -1,5 +1,5 @@
 {
-  "SECRET_KEY": "algumaCoisaGrandeEAleatorio",
+  "SECRET_KEY": "UmaStringBemGrandeEAleatorio",
   "BOOTSTRAP_SERVE_LOCAL": true,
   "BOOTSTRAP_BOOTSWATCH_THEME": "cerulean",
 
@@ -13,6 +13,24 @@
   "DEFAULT_USER_EMAIL": "user@user.com.br",
   "DEFAULT_USER_PASSWORD": "123",
 
-  "TIMEZONE": "America/Sao_Paulo"
+  "MAIL_SERVER": "smtp.sendgrid.net",
+  "MAIL_PORT": "587",
+  "MAIL_USERNAME": "apikey",
+  "MAIL_PASSWORD" : "xxxxxx",
+  "MAIL_DEFAULT_SENDER": "xxxxx",
+  "MAIL_USE_LOCALTIME": true,
+  "MAIL_BACKEND": "console",
 
+  "APP_BASE_URL": "http://127.0.0.1:5000",
+  "APP_NAME": "Controle de estoque",
+  "APP_MTA_MESSAGEID": "localhost.localdomain",
+
+  "PASSWORD_MIN": 6,
+  "PASSWORD_MAX": 128,
+  "PASSWORD_MAIUSCULA": false,
+  "PASSWORD_MINUSCULA": false,
+  "PASSWORD_NUMERO": false,
+  "PASSWORD_SIMBOLO": false,
+
+  "TIMEZONE": "America/Sao_Paulo"
 }
