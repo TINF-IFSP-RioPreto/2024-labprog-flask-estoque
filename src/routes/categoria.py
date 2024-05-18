@@ -49,6 +49,8 @@ def edit(id_categoria):
         return redirect(url_for('categorias.lista'))
 
     form = NovoEditCategoriaForm(request.values, obj=categoria)
+    form.submit.label.text = "Alterar"
+
     if form.validate_on_submit():
         old = categoria.nome
         categoria.nome = form.nome.data

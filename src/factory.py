@@ -8,6 +8,7 @@ from flask import Flask, render_template
 from flask_login import user_logged_in
 
 import src.routes.auth
+from src.models.produto import Produto
 from src.models.categoria import Categoria
 from src.models.usuario import User
 from src.modules import bootstrap, csrf, db, login, mail, minify
@@ -107,17 +108,18 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
                 db.session.commit()
 
         if Categoria.is_empty():
-            categorias = ["Alimentos",
-                          "Bebidas",
-                          "Padaria",
-                          "Material de limpeza",
-                          "Açougue"]
-            for c in categorias:
-                app.logger.info("Adicionando categoria %s", c)
+            from src.models.seed import seed_data
+            for item in seed_data:
                 categoria = Categoria()
-                categoria.nome = c
+                categoria.nome = item["categoria"]
                 db.session.add(categoria)
-            db.session.commit()
+                for p in item["produtos"]:
+                    produto = Produto()
+                    produto.nome = p["nome"]
+                    produto.preco = p["preco"]
+                    produto.categoria = categoria
+                    db.session.add(produto)
+                db.session.commit()
 
     @app.route('/')
     @app.route('/index')

@@ -1,0 +1,106 @@
+seed_data = [
+    {'categoria': "Bebidas",
+     "produtos": [{'nome': "Refrigerante Guaraná Antarctica Zero Açúcar 200ml", 'preco': 1.43},
+                  {'nome': "Refrigerante Coca Cola 2 Litros", 'preco': 9.99},
+                  {'nome': "Água de Coco Kerococo 1L", 'preco': 10.49},
+                  {'nome': "Água Tônica Zero Açúcar Schweppes Lata 220ml", 'preco': 1.99},
+                  {'nome': "Água Mineral Minalba sem Gás 1,5L", 'preco': 2.99},
+                  {'nome': "Refresco em Pó Tang Limão 18g", 'preco': 1.28},
+                  {'nome': "Bebida a Base de Soja Original ADES 1 Litro", 'preco': 7.16},
+                  {'nome': "Suco Pronto Maguary Laranja 1L", 'preco': 5.70}
+                  ]
+     },
+    {'categoria': "Carnes",
+     "produtos": [{'nome': "Frango Sassami Swift 1kg", 'preco': 16.98},
+                  {'nome': "Filé de Peito de Frango Sadia sem Pele e sem Osso 1kg", 'preco': 21.95},
+                  {'nome': "Linguiça Toscana Aurora Pacote 800g", 'preco': 13.94},
+                  {'nome': "Carne moída light Swift 500g", 'preco': 19.98},
+                  {'nome': "Peito de Frango Sadia Cozido Desfiado Congelado 400g", 'preco': 17.28},
+                  {'nome': "Frango Empanado Seara Recheado com Presunto e Queijo 110g", 'preco': 4.92}
+                  ]
+     },
+    {'categoria': "Frios e laticínios",
+     "produtos": [{'nome': "Leite Itambé Integral 1L", 'preco': 4.99},
+                  {'nome': "Queijo Mussarela Fatiada Président 150g", 'preco': 9.99},
+                  {'nome': "Iogurte Parcialmente Desnatado Vitamina de Frutas Danone Garrafa 1,25kg", 'preco': 13.96},
+                  {'nome': "Margarina com Sal Doriana 500g", 'preco': 6.98},
+                  {'nome': "Requeijão Cremoso Light Vigor 200g", 'preco': 7.96},
+                  {'nome': "Manteiga Aviação com Sal 500g Pote", 'preco': 32.65}
+                  ]
+     },
+    {'categoria': "Higiene",
+     "produtos": [{'nome': "Cartucho para Barbear Gillette Mach 3 Sensitive", 'preco': 33.95},
+                  {'nome': "Sabonete Nivea Carvão Detox 85g | Com 8 Unidades", 'preco': 19.98},
+                  {'nome': "Sabonete líquido baby da cabeça aos pés Johnson's 400ml", 'preco': 29.99},
+                  {'nome': "Papel Higiênico Folha Dupla Dualette Leve 16 Pague 15 com 30 Metros", 'preco': 28.46},
+                  {'nome': "Hastes Flexíveis Johnson & Johnson Cotonetes Pote | Com 150 Unidades", 'preco': 17.39},
+                  {'nome': "Desodorante Aerossol Masculino Dove + Care Cuidado Total 250ml", 'preco': 27.89},
+                  {'nome': "Sabonete Alma de Flores Jasmim 130g", 'preco': 7.16},
+                  {'nome': "Creme Hidratante Corporal Cerave Pele Seca 200g", 'preco': 68.30}
+                  ]
+     },
+    {'categoria': "Hortifruti",
+     "produtos": [{'nome': "Ovo Branco Grande Coop 20 Unidades", 'preco': 15.99},
+                  {'nome': "Goiaba Vermelha Benassi 1 Unidade Aprox 250g", 'preco': 1.74},
+                  {'nome': "Mamão Formosa Benassi 1 Unidade Aprox 1,8kg", 'preco': 16.18},
+                  {'nome': "Uva Vitória Preta Benassi sem Semente 500g", 'preco': 14.95},
+                  {'nome': "Melão Amarelo 1 Unidade Aprox 2,7kg", 'preco': 21.57},
+                  {'nome': "Couve Manteiga Villa das Folhas 180g", 'preco': 9.99},
+                  {'nome': "Alface Americana Orgânico Solo Vivo", 'preco': 7.92},
+                  {'nome': "Batata Doce Amarela Benassi 1 Unidade Aprox 430g", 'preco': 2.69},
+                  {'nome': "Tamara Benassi 200g", 'preco': 11.98},
+                  {'nome': "Inhame Solo Vivo Bandeja 500g", 'preco': 9.96},
+                  {'nome': "Milho de Pipoca Argentina Benassi 100g", 'preco': 0.99},
+                  {'nome': "Cereja em Calda Benassi 100g", 'preco': 7.98},
+                  {'nome': "Picles Nacional Cassino Benassi 200g", 'preco': 5.98},
+                  {'nome': "Acelga Benassi Pacote 150g", 'preco': 9.99},
+                  {'nome': "Repolho Verde Orgânico Solo Vivo", 'preco': 6.95},
+                  {'nome': "Pimenta Cambuci Benassi 200g", 'preco': 1.39}
+                  ]
+     },
+    {'categoria': "Limpeza",
+     "produtos": [{'nome': "Detergente Líquido Ypê Clear 500ml", 'preco': 2.70},
+                  {'nome': "Lava Roupa em Pó Lavagem Perfeita Omo 2.2KG", 'preco': 31.99},
+                  {'nome': "Lã de Aço Bombril | Com 8 Unidades", 'preco': 3.29},
+                  {'nome': "Amaciante Ypê Aconchego 2 Litros", 'preco': 9.59},
+                  {'nome': "Esponja Multiuso Limpeza Pesada Scoth Brite Leve 4 Pegue 3", 'preco': 7.36},
+                  {'nome': "Saco para Lixo Dover Roll Azul Economia 50L | Com 30 Unidades", 'preco': 16.96},
+                  {'nome': "Álcool Líquido Coperalcool Bacfree 46°INPM 500ml", 'preco': 7.99},
+                  {'nome': "Limpador para Banheiro Harpic Cloro Forte 200ml", 'preco': 8.23},
+                  {'nome': "Inseticida Raid Elétrico 45 Noites Refil 32,9ml | Com 2 Unidades", 'preco': 26.87}
+                  ]
+     },
+    {'categoria': "Padaria",
+     "produtos": [{'nome': "Pão Forma Integral Wickbold 550g", 'preco': 6.99},
+                  {'nome': "Panettone Frutas Visconti 400g", 'preco': 4.99},
+                  {'nome': "Bisnaguinha Cenoura Mandioquinha Nutrella 300g", 'preco': 8.49},
+                  {'nome': "Pão Tortilha Rap 10 Chocolate 198g", 'preco': 9.96},
+                  {'nome': "Pão de forma integral do forno Wickbold 500g", 'preco': 10.98},
+                  {'nome': "Bisnaguinha Pullman Artesano Original 300g", 'preco': 9.95},
+                  {'nome': "Bolo Pronto Panco Formigueiro 300g", 'preco': 10.29}
+                  ]
+     },
+    {'categoria': "Mercearia",
+     "produtos": [{'nome': "Café Torrado e Moído 3 Corações Tradicional Pouch 500g", 'preco': 14.49},
+                  {'nome': "Macarrão Dona Benta Massa com Ovos Parafuso 500g", 'preco': 3.98},
+                  {'nome': "Milho Verde Quero Lata 170g", 'preco': 4.50},
+                  {'nome': "Biscoito Recheado Oreo Original 90g", 'preco': 3.16},
+                  {'nome': "Cappuccino em Cápsula Nescafé Dolce Gusto Galak | Com 10 Cápsulas", 'preco': 17.98},
+                  {'nome': "Achocolatado em Pó Toddy Original Pacote 700g", 'preco': 15.99},
+                  {'nome': "Macarrão Instantaneo Nissin Lámen Turma da Mônica Tomate 75g", 'preco': 2.85},
+                  {'nome': "Feijao Carioca Tipo 1 Pantera 1kg", 'preco': 9.99},
+                  {'nome': "Amendoim Elma Chips Ovinhos 170g", 'preco': 7.97},
+                  {'nome': "Biscoito Salgado Club Social Crostini Queijo Parmesão e Vegetais 80g", 'preco': 4.79}
+                  ]
+     },
+    {'categoria': "Utilidades domésticas",
+     "produtos": [{'nome': "Lâmpada superled 9w bivolt branca Ourolux", 'preco': 5.99},
+                  {'nome': "Garrafa Térmica Tramontina Exata Vermelha 1L", 'preco': 79.98},
+                  {'nome': "Fósforo Paraná Ecológico Família | Com 3 Caixas com 100 Fósforos cada", 'preco': 4.99},
+                  {'nome': "Carregador de Parede USB I2Go Ultra Rápido", 'preco': 129.90},
+                  {'nome': "Talheres Tramontina IPA Preto Inox Avulso 21cm", 'preco': 4.96},
+                  {'nome': "Pilha Panasonic Alcalina Pequena AA | Com 2 Unidades", 'preco': 13.98},
+                  {'nome': "Desentupidor Bettanin Noviça Turbo", 'preco': 24.45}
+                  ]
+     },
+]
