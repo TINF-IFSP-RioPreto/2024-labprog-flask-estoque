@@ -76,6 +76,7 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
         user.dta_ultimo_acesso = login_anterior or login_atual
 
     with app.app_context():
+        from src.models.produto import Produto
         if not existe_esquema(app):
             app.logger.critical("É necessário fazer a migração/upgrade do banco")
             sys.exit(1)
@@ -123,8 +124,10 @@ def create_app(config_filename: str = 'config.dev.json') -> Flask:
     app.logger.debug("Registrando as blueprints")
     from src.routes.auth import bp as auth_bp
     from src.routes.categoria import bp as categoria_bp
+    from src.routes.produto import bp as produto_bp
     app.register_blueprint(auth_bp)
     app.register_blueprint(categoria_bp)
+    app.register_blueprint(produto_bp)
 
     # Formatando as datas para horário local
     # https://stackoverflow.com/q/65359968
