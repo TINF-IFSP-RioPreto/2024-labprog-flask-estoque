@@ -16,7 +16,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-lg-end">
                             <li><a class="dropdown-item" href="#">{{ render_icon('card-list') }}&nbsp;Listar</a></li>
-                            <li><a class="dropdown-item" href="#">{{ render_icon('plus') }}&nbsp;Adicionar</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('produto.add') }}">{{ render_icon('plus') }}&nbsp;Adicionar</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#">{{ render_icon('exclamation-diamond') }}&nbsp;Produtos em falta</a></li>
                             <li><a class="dropdown-item" href="#">{{ render_icon('boxes') }}&nbsp;Estoque</a></li>
