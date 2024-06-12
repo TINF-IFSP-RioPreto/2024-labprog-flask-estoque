@@ -49,6 +49,45 @@ def add():
                            title="Adicionar novo produto")
 
 
+@bp.route('/edit/<uuid:produto_id>', methods=['GET', 'POST'])
+def edit(produto_id):
+    produto = Produto.get_by_id(produto_id)
+    if produto is None:
+        flash("Produto inexistente", category='danger')
+        return redirect(url_for('produto.lista'))
+
+    form = ProdutoForm(obj=produto)
+    form.submit.label.text = "Alterar produto"
+    categorias = db.session.execute(db.select(Categoria).order_by(Categoria.nome)).scalars()
+    form.categoria.choices = [(str(i.id), i.nome) for i in categorias]
+    if form.validate_on_submit():
+        produto.nome = form.nome.data
+        produto.preco = form.preco.data
+        produto.estoque = form.estoque.data
+        produto.ativo = form.ativo.data
+        categoria = Categoria.get_by_id(form.categoria.data)
+        if categoria is None:
+            flash("Categoria inexistente!", category='danger')
+            return redirect(url_for('produto.lista'))
+        produto.categoria = categoria
+        db.session.commit()
+        flash("Produto alterado", category='success')
+        return redirect(url_for('produto.lista'))
+
+    form.categoria.process_data(str(produto.categoria_id))
+    return render_template('produto/add_edit.jinja2', form=form,
+                           title="Alterar um produto")
+
+@bp.route('/lista', methods=['GET', 'POST'])
+@bp.route('/', methods=['GET', 'POST'])
+def lista():
+    sentenca = db.select(Produto).order_by(Produto.nome)
+    rset = db.session.execute(sentenca).scalars()
+
+    return render_template('produto/lista.jinja2',
+                           title="Lista de produtos",
+                           rset=rset)
+
 @bp.route('/imagem/<uuid:id_produto>', methods=['GET'])
 def imagem(id_produto):
     produto = Produto.get_by_id(id_produto)
