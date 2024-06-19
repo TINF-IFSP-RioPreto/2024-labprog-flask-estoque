@@ -1,3 +1,41 @@
+{% macro sidebar_produto(produto) %}
+    {% from 'bootstrap5/utils.html' import render_icon %}
+    <table class="table table-sm small">
+        <tr>
+            <th scope="row">Data de cadastro</th>
+            <td class="text-end">{{ produto.dta_cadastro | as_localtime }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Data da última alteração</th>
+            <td class="text-end">{{ produto.dta_atualizacao | as_localtime }}</td>
+        </tr>
+        <tr>
+            <th scope="row" colspan="2" class="text-center">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#fullimage">
+                    <img src="{{ url_for('produto.thumbnail', id_produto=produto.id, max_size=128) }}"
+                         class="img-fluid img-thumbnail mb-3 mt-5"
+                         alt="Imagem de {{ produto.nome }}"
+                         width=128 /><br />
+                </a>
+                <small>Clique para imagem em tamanho grande</small>
+                <div class="modal fade" id="fullimage" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title fs-5" id="exampleModalLabel">{{ produto.nome }}</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body active">
+                                <img src="{{ url_for('produto.imagem', id_produto=produto.id) }}" class="img-fluid img-rounded mx-auto" alt="Imagem de {{ produto.nome }}" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </th>
+        </tr>
+    </table>
+{% endmacro %}
+
 {% macro barra_navegacao() %}
     {% from 'bootstrap5/nav.html' import render_nav_item %}
     {% from 'bootstrap5/utils.html' import render_icon %}
